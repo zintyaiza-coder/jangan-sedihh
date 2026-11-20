@@ -12,7 +12,7 @@ let height = (matrixCanvas.height = particleCanvas.height = window.innerHeight);
 
 // Urutan kata pembuka
 const sequenceWords = ["3", "2", "1", "Jangan", "Sedih", "Yaa", "El"];
-const rotatingHeartText = "You Matter";
+const rotatingHeartText = "Stay Happy El";
 
 // 1. EFEK HUJAN MATRIX PINK
 const chars = "01♡✦✧ABCDEFGHIJKLMNOPQRSTUVWXYZ";
