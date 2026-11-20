@@ -7,13 +7,18 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Layar klik awal agar audio tidak diblokir browser -->
+  <div id="startOverlay">
+    <button id="startBtn">Tap untuk Mulai ✨</button>
+  </div>
+
   <canvas id="matrixCanvas"></canvas>
   <canvas id="dotCanvas"></canvas>
 
-  <audio id="bgMusic" src="lagu1.mp3" preload="auto"></audio>
+  <audio id="bgMusic" src="lagu1.mp3" preload="auto" loop></audio>
 
   <div id="heartScene">
-    <div id="heartTrail"></div>
+    <div id="heartContainer"></div>
   </div>
 
   <div id="robotLyric" class="robot-lyric" aria-live="polite"></div>
