@@ -19,7 +19,7 @@ const sequenceWords = ["3", "2", "1", "Jangan", "Sedih", "Yaa", "El"];
 const heartPhrase = "Stay Happy El";
 
 // ==========================================
-// 1. HUJAN KARAKTER ALA VIDEO 2
+// 1. HUJAN KARAKTER PINK
 // ==========================================
 const matrixChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ*+-<>";
 const fontSize = 14;
@@ -38,8 +38,8 @@ function drawMatrixRain() {
 
     const isTip = Math.random() > 0.85;
     mCtx.fillStyle = isTip
-      ? "rgba(255, 225, 238, 0.92)"
-      : "rgba(235, 95, 155, 0.55)";
+      ? "rgba(255, 210, 230, 0.95)"
+      : "rgba(255, 92, 168, 0.58)";
     mCtx.fillText(ch, x, y);
 
     if (y > height && Math.random() > 0.975) {
@@ -50,7 +50,7 @@ function drawMatrixRain() {
 }
 
 // ==========================================
-// 2. DOT-MATRIX GRID RAPI (VIDEO 2)
+// 2. DOT-MATRIX WARNA PINK
 // ==========================================
 const totalDots = 2200;
 const dots = [];
@@ -164,9 +164,9 @@ function morphWord(word) {
 }
 
 // ==========================================
-// 3. HATI TEKS BERLAPIS ALA VIDEO 1
+// 3. HATI TEGAK BERLAPIS (TIDAK MIRING)
 // ==========================================
-const totalHeartItems = 64;
+const totalHeartItems = 72;
 const heartItems = [];
 
 function createHeartTrail() {
@@ -186,7 +186,9 @@ function createHeartTrail() {
 
     heartItems.push({
       el: item,
-      baseT: (i / totalHeartItems) * Math.PI * 2
+      wordEl: word,
+      baseT: (i / totalHeartItems) * Math.PI * 2,
+      layer: i % 3
     });
   }
 }
@@ -197,9 +199,9 @@ let heartRunning = false;
 function updateHeartTrail(now) {
   if (!heartRunning) return;
 
-  heartAngleOffset += 0.014;
-  const pulse = 1 + Math.sin(now * 0.0025) * 0.04;
-  const baseScale = Math.min(width, height) * 0.024 * pulse;
+  heartAngleOffset += 0.012;
+  const pulse = 1 + Math.sin(now * 0.0025) * 0.03;
+  const baseScale = Math.min(width, height) * 0.023 * pulse;
 
   for (let i = 0; i < heartItems.length; i++) {
     const item = heartItems[i];
@@ -213,15 +215,18 @@ function updateHeartTrail(now) {
       Math.cos(4 * t)
     );
 
-    const xPx = hx * baseScale * 1.08;
-    const yPx = hy * baseScale * 0.92;
+    // Sedikit variasi kedalaman antar lapisan tanpa memiringkan bentuk hati
+    const layerScale = 0.88 + item.layer * 0.08;
+    const xPx = hx * baseScale * layerScale;
+    const yPx = hy * baseScale * layerScale;
 
     item.el.style.transform = `translate(${xPx.toFixed(2)}px, ${yPx.toFixed(2)}px)`;
+    item.wordEl.style.opacity = (0.55 + item.layer * 0.22).toFixed(2);
   }
 }
 
 // ==========================================
-// 4. LAGU & LIRIK ROBOT (AUTO LOOP + RESET)
+// 4. LAGU & LIRIK ROBOT (MULAI SAAT LOVE MUNCUL + AUTO LOOP)
 // ==========================================
 const robotLyrics = [
   { atSec: 0.2, line: "Jangan Bersedih" },
@@ -266,7 +271,10 @@ function runRobotTypewriter(text) {
   }, stepSpeed);
 }
 
-function syncLyrics() {
+function startMusicAndLyrics() {
+  bgMusic.currentTime = 0;
+  bgMusic.play().catch(() => {});
+
   let lyricIdx = 0;
   let lastTime = 0;
 
@@ -322,9 +330,10 @@ function runSequence() {
       createHeartTrail();
       heartRunning = true;
 
+      // Lagu & lirik mulai tepat saat love muncul
       setTimeout(() => {
         heartScene.classList.add("show");
-        syncLyrics();
+        startMusicAndLyrics();
       }, 500);
     }
   }
@@ -339,9 +348,9 @@ function render(now) {
   const dotRadius = width < 600 ? 2.5 : 3.2;
 
   dCtx.save();
-  dCtx.fillStyle = "#fff8dc";
-  dCtx.shadowColor = "rgba(255, 210, 140, 0.8)";
-  dCtx.shadowBlur = 6;
+  dCtx.fillStyle = "#ff85b3";
+  dCtx.shadowColor = "rgba(255, 77, 136, 0.85)";
+  dCtx.shadowBlur = 8;
 
   for (let i = 0; i < dots.length; i++) {
     dots[i].update(now);
@@ -362,8 +371,8 @@ window.addEventListener("resize", () => {
 
 startBtn.addEventListener("click", () => {
   startOverlay.classList.add("hidden");
-  bgMusic.currentTime = 0;
-  bgMusic.play().catch(() => {});
+  // Memuat audio saat interaksi awal agar siap diputar pas bagian love
+  bgMusic.load();
   requestAnimationFrame(render);
   runSequence();
 });
