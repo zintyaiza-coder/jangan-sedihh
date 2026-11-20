@@ -27,7 +27,7 @@ let columns = Math.floor(width / fontSize);
 let drops = Array.from({ length: columns }, () => Math.random() * -(height / fontSize));
 
 function drawMatrixRain() {
-  mCtx.fillStyle = "rgba(0, 0, 0, 0.14)";
+  mCtx.fillStyle = "rgba(5, 2, 6, 0.16)";
   mCtx.fillRect(0, 0, width, height);
 
   mCtx.font = `${fontSize}px monospace`;
@@ -36,23 +36,23 @@ function drawMatrixRain() {
     const x = i * fontSize;
     const y = drops[i] * fontSize;
 
-    const isTip = Math.random() > 0.85;
+    const isTip = Math.random() > 0.88;
     mCtx.fillStyle = isTip
-      ? "rgba(255, 210, 230, 0.95)"
-      : "rgba(255, 92, 168, 0.58)";
+      ? "rgba(255, 185, 215, 0.85)"
+      : "rgba(235, 70, 145, 0.42)";
     mCtx.fillText(ch, x, y);
 
     if (y > height && Math.random() > 0.975) {
       drops[i] = Math.random() * -20;
     }
-    drops[i] += 0.95;
+    drops[i] += 0.9;
   }
 }
 
 // ==========================================
-// 2. DOT-MATRIX WARNA PINK
+// 2. DOT-MATRIX PINK JELAS (ANTI MENYATU)
 // ==========================================
-const totalDots = 2200;
+const totalDots = 2400;
 const dots = [];
 
 class Dot {
@@ -71,7 +71,7 @@ class Dot {
   scatter() {
     this.state = "scatter";
     const angle = Math.random() * Math.PI * 2;
-    const speed = 2.5 + Math.random() * 5;
+    const speed = 2.2 + Math.random() * 4.5;
     this.vx = Math.cos(angle) * speed;
     this.vy = Math.sin(angle) * speed;
   }
@@ -85,11 +85,11 @@ class Dot {
 
   update(now) {
     if (this.state === "form" && this.active) {
-      this.x += (this.tx - this.x) * 0.22;
-      this.y += (this.ty - this.y) * 0.22;
+      this.x += (this.tx - this.x) * 0.24;
+      this.y += (this.ty - this.y) * 0.24;
     } else {
-      this.x += this.vx + Math.cos(now * 0.002 + this.seed) * 0.35;
-      this.y += this.vy + Math.sin(now * 0.002 + this.seed) * 0.35;
+      this.x += this.vx + Math.cos(now * 0.002 + this.seed) * 0.3;
+      this.y += this.vy + Math.sin(now * 0.002 + this.seed) * 0.3;
       this.vx *= 0.95;
       this.vy *= 0.95;
     }
@@ -97,8 +97,18 @@ class Dot {
 
   draw(dotRadius) {
     if (!this.active && this.state === "form") return;
+
+    // Lingkaran gelap tipis di belakang titik aktif agar kontras di atas matrix pink
+    if (this.state === "form" && this.active) {
+      dCtx.beginPath();
+      dCtx.arc(this.x, this.y, dotRadius + 2.2, 0, Math.PI * 2);
+      dCtx.fillStyle = "rgba(8, 2, 6, 0.78)";
+      dCtx.fill();
+    }
+
     dCtx.beginPath();
     dCtx.arc(this.x, this.y, dotRadius, 0, Math.PI * 2);
+    dCtx.fillStyle = this.state === "form" && this.active ? "#ff69b4" : "#ff85b3";
     dCtx.fill();
   }
 }
@@ -114,10 +124,10 @@ function sampleTextDots(text) {
   off.height = height;
 
   const isShort = text.length <= 2;
-  const maxWidth = width * 0.82;
+  const maxWidth = width * 0.84;
   let fontSizePx = isShort
-    ? Math.min(width, height) * 0.44
-    : Math.min(width * 0.21, 170);
+    ? Math.min(width, height) * 0.45
+    : Math.min(width * 0.22, 175);
 
   oCtx.font = `900 ${fontSizePx}px Arial, Helvetica, sans-serif`;
   const measured = oCtx.measureText(text).width;
@@ -133,8 +143,8 @@ function sampleTextDots(text) {
 
   const pixels = oCtx.getImageData(0, 0, width, height).data;
   const gridStep = isShort
-    ? (width < 600 ? 10 : 12)
-    : (width < 600 ? 8 : 10);
+    ? (width < 600 ? 9 : 11)
+    : (width < 600 ? 7 : 9);
 
   const coords = [];
   for (let y = 0; y < height; y += gridStep) {
@@ -160,13 +170,14 @@ function morphWord(word) {
         dots[i].state = "scatter";
       }
     }
-  }, 320);
+  }, 300);
 }
 
 // ==========================================
-// 3. HATI TEGAK BERLAPIS (TIDAK MIRING)
+// 3. HATI TEKS RAPI & TERATUR
 // ==========================================
-const totalHeartItems = 72;
+// Jumlah item pas & jarak sudut merata agar teks tidak saling menumpuk berantakan
+const totalHeartItems = 44;
 const heartItems = [];
 
 function createHeartTrail() {
@@ -187,8 +198,7 @@ function createHeartTrail() {
     heartItems.push({
       el: item,
       wordEl: word,
-      baseT: (i / totalHeartItems) * Math.PI * 2,
-      layer: i % 3
+      baseT: (i / totalHeartItems) * Math.PI * 2
     });
   }
 }
@@ -199,9 +209,8 @@ let heartRunning = false;
 function updateHeartTrail(now) {
   if (!heartRunning) return;
 
-  heartAngleOffset += 0.012;
-  const pulse = 1 + Math.sin(now * 0.0025) * 0.03;
-  const baseScale = Math.min(width, height) * 0.023 * pulse;
+  heartAngleOffset += 0.01;
+  const baseScale = Math.min(width, height) * 0.0235;
 
   for (let i = 0; i < heartItems.length; i++) {
     const item = heartItems[i];
@@ -215,13 +224,16 @@ function updateHeartTrail(now) {
       Math.cos(4 * t)
     );
 
-    // Sedikit variasi kedalaman antar lapisan tanpa memiringkan bentuk hati
-    const layerScale = 0.88 + item.layer * 0.08;
-    const xPx = hx * baseScale * layerScale;
-    const yPx = hy * baseScale * layerScale;
+    const xPx = hx * baseScale;
+    const yPx = hy * baseScale;
 
-    item.el.style.transform = `translate(${xPx.toFixed(2)}px, ${yPx.toFixed(2)}px)`;
-    item.wordEl.style.opacity = (0.55 + item.layer * 0.22).toFixed(2);
+    // Sedikit gradasi terang-redup halus searah putaran agar berasa mengalir
+    const depth = (Math.sin(t) + 1) * 0.5; // 0 .. 1
+    const opacity = (0.45 + depth * 0.55).toFixed(2);
+    const scale = (0.9 + depth * 0.14).toFixed(2);
+
+    item.el.style.transform = `translate(${xPx.toFixed(2)}px, ${yPx.toFixed(2)}px) scale(${scale})`;
+    item.wordEl.style.opacity = opacity;
   }
 }
 
@@ -318,7 +330,7 @@ function runSequence() {
     if (step < sequenceWords.length) {
       morphWord(sequenceWords[step]);
       step++;
-      setTimeout(nextStep, 1650);
+      setTimeout(nextStep, 1700);
     } else {
       dots.forEach((dot) => {
         dot.state = "scatter";
@@ -330,7 +342,6 @@ function runSequence() {
       createHeartTrail();
       heartRunning = true;
 
-      // Lagu & lirik mulai tepat saat love muncul
       setTimeout(() => {
         heartScene.classList.add("show");
         startMusicAndLyrics();
@@ -345,11 +356,10 @@ function render(now) {
   drawMatrixRain();
 
   dCtx.clearRect(0, 0, width, height);
-  const dotRadius = width < 600 ? 2.5 : 3.2;
+  const dotRadius = width < 600 ? 2.8 : 3.5;
 
   dCtx.save();
-  dCtx.fillStyle = "#ff85b3";
-  dCtx.shadowColor = "rgba(255, 77, 136, 0.85)";
+  dCtx.shadowColor = "rgba(255, 64, 129, 0.85)";
   dCtx.shadowBlur = 8;
 
   for (let i = 0; i < dots.length; i++) {
@@ -371,7 +381,6 @@ window.addEventListener("resize", () => {
 
 startBtn.addEventListener("click", () => {
   startOverlay.classList.add("hidden");
-  // Memuat audio saat interaksi awal agar siap diputar pas bagian love
   bgMusic.load();
   requestAnimationFrame(render);
   runSequence();
