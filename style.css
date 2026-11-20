@@ -1,0 +1,82 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #07050a;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#matrixCanvas {
+  z-index: 1;
+}
+
+#particleCanvas {
+  z-index: 2;
+  pointer-events: none;
+}
+
+#ui {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 1.2s ease, transform 1.2s ease;
+  pointer-events: none;
+}
+
+#ui.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+#heartTrail {
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+.love {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.love_word {
+  color: #ffb3c6;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  text-shadow:
+    0 0 8px #ff5c8a,
+    0 0 18px #ff8fab;
+  transform: translate(-50%, -50%) rotate(-32deg);
+  user-select: none;
+}
+
+@media (max-width: 600px) {
+  .love_word {
+    font-size: 0.75rem;
+  }
+}
