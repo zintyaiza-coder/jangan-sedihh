@@ -16,7 +16,7 @@ let width = (matrixCanvas.width = dotCanvas.width = window.innerWidth);
 let height = (matrixCanvas.height = dotCanvas.height = window.innerHeight);
 
 const sequenceWords = ["3", "2", "1", "Jangan", "Sedih", "Yaa", "El"];
-const heartPhrase = "Stay Happy El";
+const heartPhrase = "love u all";
 
 // ==========================================
 // 1. HUJAN KARAKTER PINK
